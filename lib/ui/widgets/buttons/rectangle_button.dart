@@ -18,6 +18,9 @@ class RectangleButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        textStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
       child: child,
     );
