@@ -34,7 +34,9 @@ class CoursesGridView extends StatelessWidget {
                           : .9,
             ),
             itemBuilder: (context, index) {
-              return CourseCard(course: Course.test());
+              return CourseCard(
+                course: Course.test(),
+              );
             },
           );
         },
