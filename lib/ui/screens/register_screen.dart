@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatefulWidget {
+  const RegistrationPage({super.key});
+
   @override
-  _RegistrationPageState createState() => _RegistrationPageState();
+  RegistrationPageState createState() => RegistrationPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _email = '';
   String _password = '';
-  String _confirmPassword = '';
+  String confirmPassword = '';
 
   void _registerUser() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // Call API to register user
-      print('Registering user...');
-      print('Name: $_name');
-      print('Email: $_email');
-      print('Password: $_password');
+      debugPrint('Registering user...');
+      debugPrint('Name: $_name');
+      debugPrint('Email: $_email');
+      debugPrint('Password: $_password');
     }
   }
 
@@ -27,7 +29,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registration Page'),
+        title: const Text('Registration Page'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -36,7 +38,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                 ),
@@ -48,9 +50,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 },
                 onSaved: (value) => _name = value!,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
@@ -64,9 +66,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 },
                 onSaved: (value) => _email = value!,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
                 ),
@@ -81,9 +83,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 },
                 onSaved: (value) => _password = value!,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Confirm Password',
                   border: OutlineInputBorder(),
                 ),
@@ -96,12 +98,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   }
                   return null;
                 },
-                onSaved: (value) => _confirmPassword = value!,
+                onSaved: (value) => confirmPassword = value!,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _registerUser,
-                child: Text('Register'),
+                child: const Text('Register'),
               ),
             ],
           ),

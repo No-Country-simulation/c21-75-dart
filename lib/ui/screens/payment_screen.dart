@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:learndid/ui/widgets/formfield/credit_card_field.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
 
   @override
-  _PaymentScreenState createState() => _PaymentScreenState();
+  PaymentScreenState createState() => PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class PaymentScreenState extends State<PaymentScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _cardNumber = '';
-  String _cardHolderName = '';
+  String cardNumber = '';
+  String cardHolderName = '';
   String _amount = '';
   final String _itemName = 'Curso 1';
 
@@ -79,7 +78,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => _cardNumber = value!,
+                onSaved: (value) => cardNumber = value!,
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -93,7 +92,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => _cardHolderName = value!,
+                onSaved: (value) => cardHolderName = value!,
               ),
               const SizedBox(height: 20),
               TextFormField(
