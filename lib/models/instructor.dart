@@ -9,7 +9,8 @@ class Instructor extends User {
     required super.name,
     required super.email,
     required this.createdCourses,
-  }) : super(role: 'instructor');
+    super.role = 'instructor',
+  });
 
   // Convertir desde/para Firestore
   factory Instructor.fromFirestore(DocumentSnapshot doc) {
@@ -30,5 +31,19 @@ class Instructor extends User {
       'role': role,
       'createdCourses': createdCourses,
     };
+  }
+
+  factory Instructor.newUser({
+    String? uid,
+    String? name,
+    required String email,
+    required List<String> createdCourses,
+  }) {
+    return Instructor(
+      uid: uid ?? '',
+      name: name ?? '',
+      email: email,
+      createdCourses: createdCourses,
+    );
   }
 }

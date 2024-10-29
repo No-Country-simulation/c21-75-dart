@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learndid/models/course.dart';
 import 'package:learndid/ui/widgets/buttons/rectangle_button.dart';
 import 'package:learndid/utils/extension/double_to_gap_extension.dart';
@@ -23,7 +22,9 @@ class _CourseCardState extends State<CourseCard> {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const CourseDetailScreen(),
+          builder: (context) => CourseDetailScreen(
+            course: widget.course,
+          ),
         ),
       ),
       child: Card(
@@ -41,14 +42,24 @@ class _CourseCardState extends State<CourseCard> {
                 borderRadius: const BorderRadius.all(Radius.circular(4)),
               ),
               clipBehavior: Clip.antiAlias,
-              child: SvgPicture.network(
+              child: Image.network(
                 key: ValueKey(widget.course.id),
-                widget.course.iconUrl,
-                fit: BoxFit.fitHeight,
-                placeholderBuilder: (context) => Skeletonizer(
-                  child: Container(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                  ),
+                widget.course.imageUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Skeletonizer(
+                    enabled: true,
+                    containersColor: Colors.grey,
+                    effect: const ShimmerEffect(),
+                    child: child,
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  'assets/images/placeholder.jpg',
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -67,7 +78,7 @@ class _CourseCardState extends State<CourseCard> {
                     ),
                     5.0.toVerticalGap,
                     AutoSizeText(
-                      widget.course.summary,
+                      widget.course.description,
                       style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

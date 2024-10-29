@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:learndid/services/firebase_service.dart';
+import 'package:learndid/ui/screens/login_screen.dart';
 import 'package:learndid/ui/screens/student_home.dart';
 import 'package:learndid/ui/style/app_theme.dart';
 
@@ -21,7 +23,9 @@ class Learndid extends StatelessWidget {
     return MaterialApp(
       title: 'Learndid',
       theme: AppTheme.lightTheme(),
-      home: const StudentHome(),
+      home: FirebaseService.currentUser != null
+          ? const StudentHome()
+          : const LoginScreen(),
     );
   }
 }

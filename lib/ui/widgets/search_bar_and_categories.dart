@@ -23,19 +23,16 @@ class _SearchBarAndCategoriesState extends State<SearchBarAndCategories> {
             },
             icon: const Icon(Icons.search),
           ),
-          suggestionsBuilder: (context, controller) => List<ListTile>.generate(
-            5,
-            (index) {
-              final item = 'Suggestion $index';
-              return ListTile(
-                title: Text(item),
-                onTap: () {
-                  setState(() {
-                    controller.closeView(item);
-                  });
-                },
-              );
-            },
+          suggestionsBuilder: (context, controller) => List.generate(
+            suggestions.length,
+            (index) => GestureDetector(
+              onTap: () {
+                controller.closeView(suggestions[index]);
+              },
+              child: ListTile(
+                title: Text(suggestions[index]),
+              ),
+            ),
           ),
         ),
         Expanded(
@@ -67,3 +64,17 @@ class _SearchBarAndCategoriesState extends State<SearchBarAndCategories> {
     );
   }
 }
+
+const suggestions = [
+  'Desarrollo web',
+  'Programación',
+  'Diseño',
+  'Marketing',
+  'Finanzas',
+  'Inglés',
+  'Francés',
+  'Alemán',
+  'Italiano',
+  'Chino',
+  'Japonés',
+];

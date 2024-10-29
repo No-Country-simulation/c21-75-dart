@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:learndid/services/firebase_service.dart';
+import 'package:learndid/ui/screens/student_home.dart';
 import 'package:learndid/ui/widgets/buttons/rectangle_button.dart';
 import 'package:learndid/ui/widgets/formfield/email_field.dart';
 import 'package:learndid/ui/widgets/formfield/password_field.dart';
@@ -10,6 +12,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -48,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       CustomEmailField(
-                        controller: TextEditingController(),
+                        controller: emailController,
                       ),
                     ],
                   ),
@@ -63,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       CustomPasswordField(
-                        controller: TextEditingController(),
+                        controller: passwordController,
                       ),
                     ],
                   ),
@@ -90,7 +94,20 @@ class LoginScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: RectangleButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      FirebaseService.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      if (FirebaseService.currentUser != null &&
+                          context.mounted) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const StudentHome(),
+                          ),
+                        );
+                      }
+                    },
                     child: Text(
                       'Iniciar Sesión',
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(

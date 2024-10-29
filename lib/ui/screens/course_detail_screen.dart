@@ -1,15 +1,25 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:learndid/models/course.dart';
+import 'package:learndid/models/instructor.dart';
+import 'package:learndid/services/firebase_service.dart';
+import 'package:learndid/ui/screens/video_and_comments.dart';
 import 'package:learndid/ui/widgets/buttons/rectangle_button.dart';
 import 'package:learndid/utils/extension/double_to_gap_extension.dart';
 
 import '../widgets/lesson_expandable_tile.dart';
 
 class CourseDetailScreen extends StatelessWidget {
-  const CourseDetailScreen({super.key});
+  const CourseDetailScreen({
+    super.key,
+    required this.course,
+  });
+
+  final Course course;
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('CourseDetailScreen: ${course.lections}');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -20,7 +30,7 @@ class CourseDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AutoSizeText(
-              'Course Title',
+              course.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -30,26 +40,39 @@ class CourseDetailScreen extends StatelessWidget {
             ),
             20.0.toVerticalGap,
             AutoSizeText(
-              'Course Description',
+              course.description,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             20.0.toVerticalGap,
-            AutoSizeText.rich(
-              TextSpan(
-                text: 'Instructor:  ',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+            FutureBuilder(
+                future: FirebaseService.getIntructorOfCourse(
+                  instructorId: course.instructorId,
+                ),
+                builder: (context, snapshot) {
+                  Instructor? instructor;
+                  if (snapshot.connectionState != ConnectionState.waiting &&
+                      snapshot.data != null) {
+                    instructor = snapshot.data!;
+                  }
+                  return AutoSizeText.rich(
+                    TextSpan(
+                      text: 'Instructor: ',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      children: [
+                        TextSpan(
+                          text: instructor != null
+                              ? ' ${instructor.name}'
+                              : 'Instructor Name',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
                     ),
-                children: [
-                  TextSpan(
-                    text: 'Instructor Name',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
-              ),
-            ),
+                  );
+                }),
             20.0.toVerticalGap,
             RectangleButton(
               child: Padding(
@@ -61,7 +84,15 @@ class CourseDetailScreen extends StatelessWidget {
                       ),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => VideoAndComments(
+                      course: course,
+                    ),
+                  ),
+                );
+              },
             ),
             20.0.toVerticalGap,
             Expanded(
@@ -95,9 +126,10 @@ class CourseDetailScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: 5,
-                        itemBuilder: (context, index) =>
-                            const LessonExpandableTile(),
+                        itemCount: course.lections?.length,
+                        itemBuilder: (context, index) => LessonExpandableTile(
+                          lection: course.lections![index],
+                        ),
                       ),
                     ),
                   ],

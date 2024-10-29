@@ -9,7 +9,8 @@ class Student extends User {
     required super.name,
     required super.email,
     required this.enrolledCourses,
-  }) : super(role: 'student');
+    super.role = 'student',
+  });
 
   // Convertir desde/para Firestore
   factory Student.fromFirestore(DocumentSnapshot doc) {
@@ -19,6 +20,7 @@ class Student extends User {
       name: data['name'] ?? '',
       email: data['email'] ?? '',
       enrolledCourses: List<String>.from(data['enrolledCourses'] ?? []),
+      role: data['role'] ?? '',
     );
   }
 
@@ -30,5 +32,19 @@ class Student extends User {
       'role': role,
       'enrolledCourses': enrolledCourses,
     };
+  }
+
+  factory Student.newUser({
+    String? uid,
+    String? name,
+    required String email,
+    required List<String> enrolledCourses,
+  }) {
+    return Student(
+      uid: uid ?? '',
+      name: name ?? '',
+      email: email,
+      enrolledCourses: enrolledCourses,
+    );
   }
 }

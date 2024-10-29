@@ -1,84 +1,113 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:learndid/models/evaluation.dart';
+
+import 'lection.dart';
 
 class Course {
-  final String id;
-  final String title;
-  final String summary;
-  final List<String> levels;
-  final List<String> roles;
-  final List<String> products;
-  final int durationInMinutes;
-  final double rating;
-  final int ratingCount;
-  final double popularity;
-  final String iconUrl;
-  final String url;
+  String? id;
+  String title;
+  String description;
+  String instructorId; // ID del instructor que creó el curso
+  List<String> studentsEnrolled; // IDs de los estudiantes inscritos
+  List<String> contentUrls; // URLs de los videos y materiales
+  String imageUrl; // URL de la imagen del curso
+  List<Evaluation>? evaluations; // Evaluaciones del curso
+  List<Lection>? lections; // Lecciones del curso
 
-  // Constructor principal
   Course({
-    required this.id,
+    this.id,
     required this.title,
-    required this.summary,
-    required this.levels,
-    required this.roles,
-    required this.products,
-    required this.durationInMinutes,
-    required this.rating,
-    required this.ratingCount,
-    required this.popularity,
-    required this.iconUrl,
-    required this.url,
+    required this.description,
+    required this.instructorId,
+    required this.studentsEnrolled,
+    required this.contentUrls,
+    required this.imageUrl,
+    this.evaluations,
+    this.lections,
   });
 
-  // Factory para crear un objeto desde JSON
-  factory Course.fromJson(Map<String, dynamic> json) {
+  // Convertir desde/para Firestore
+  factory Course.fromFirestore(DocumentSnapshot doc) {
+    Map data = doc.data() as Map;
     return Course(
-      id: json['uid'] ?? '',
-      title: json['title'] ?? 'Sin título',
-      summary: json['summary'] ?? 'Sin descripción',
-      levels: List<String>.from(json['levels'] ?? []),
-      roles: List<String>.from(json['roles'] ?? []),
-      products: List<String>.from(json['products'] ?? []),
-      durationInMinutes: json['duration_in_minutes'] ?? 0,
-      rating: (json['rating']?['average'] ?? 0.0).toDouble(),
-      ratingCount: json['rating']?['count'] ?? 0,
-      popularity: (json['popularity'] ?? 0.0).toDouble(),
-      iconUrl: json['icon_url'] ?? '',
-      url: json['url'] ?? '',
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      instructorId: data['instructorId'] ?? '',
+      studentsEnrolled: List<String>.from(data['studentsEnrolled'] ?? []),
+      contentUrls: List<String>.from(data['contentUrls'] ?? []),
+      imageUrl: data['imageUrl'] ?? '',
+      evaluations: List<Evaluation>.from(
+        data['evaluations']?.map((e) => Evaluation.fromFirestore(e)) ?? [],
+      ),
+      lections: List<Lection>.from(
+        data['lections']?.map((l) => Lection.fromFirestore(l)) ?? [],
+      ),
     );
   }
 
-  // Método para obtener cursos desde la API
-  static Future<List<Course>> fetchCourses() async {
-    const String apiUrl = 'https://learn.microsoft.com/api/catalog/';
-
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> modules = jsonDecode(response.body)['modules'];
-      return modules.map((json) => Course.fromJson(json)).toList();
-    } else {
-      throw Exception('Error al cargar los cursos');
-    }
-  }
-
-  // Método factory de prueba para desarrollo
   factory Course.test() {
     return Course(
-      id: 'test-id',
-      title: 'Curso de Prueba',
-      summary: 'Este es un curso de ejemplo para pruebas internas.',
-      levels: ['intermediate'],
-      roles: ['administrator'],
-      products: ['windows', 'intune'],
-      durationInMinutes: 48,
-      rating: 4.5,
-      ratingCount: 42,
-      popularity: 0.8,
-      iconUrl:
-          'https://learn.microsoft.com/en-us/training/achievements/generic-badge.svg',
-      url: 'https://learn.microsoft.com/test-url',
+      id: '1',
+      title: 'Curso de Flutter',
+      description: 'Aprende a programar aplicaciones móviles con Flutter',
+      instructorId: '1',
+      studentsEnrolled: [],
+      contentUrls: [],
+      imageUrl: 'https://rickandmortyapi.com/api/character/avatar/464.jpeg',
+      lections: [
+        Lection(
+          title: 'Introducción a Flutter',
+          topics: [
+            LectionTopic(
+              title: 'Instalación de Flutter',
+              duration: '10:00',
+            ),
+            LectionTopic(
+              title: 'Creación de un proyecto',
+              duration: '15:00',
+            ),
+          ],
+        ),
+        Lection(
+          title: 'Widgets y layouts',
+          topics: [
+            LectionTopic(
+              title: 'Widgets básicos',
+              duration: '20:00',
+            ),
+            LectionTopic(
+              title: 'Layouts',
+              duration: '25:00',
+            ),
+          ],
+        ),
+      ],
+      evaluations: [
+        Evaluation(
+          courseId: '1',
+          studentId: 'cBDU46DwPpgkIOPS9hnKIJtskXC2',
+          score: 90,
+          feedback: 'Muy buen curso',
+        ),
+        Evaluation(
+          courseId: '1',
+          studentId: 'cBDU46DwPpgkIOPS9hnKIJtskXC2',
+          score: 80,
+          feedback: 'Excelente curso',
+        ),
+      ],
     );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'description': description,
+      'instructorId': instructorId,
+      'studentsEnrolled': studentsEnrolled,
+      'contentUrls': contentUrls,
+      'imageUrl': imageUrl,
+    };
   }
 }

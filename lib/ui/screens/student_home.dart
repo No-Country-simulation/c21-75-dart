@@ -1,8 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:learndid/services/firebase_service.dart';
 
 import '../widgets/courses_grid_view.dart';
 import '../widgets/search_bar_and_categories.dart';
+import 'login_screen.dart';
 
 class StudentHome extends StatelessWidget {
   const StudentHome({super.key});
@@ -21,6 +23,26 @@ class StudentHome extends StatelessWidget {
               ),
         ),
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.logout,
+            color: Colors.red,
+          ),
+          onPressed: () {
+            FirebaseService.signOut().then(
+              (value) {
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                }
+              },
+            );
+          },
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
       body: const Padding(
         padding: EdgeInsets.all(16.0),

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  String uid;
-  String name;
+  String? uid;
+  String? name;
   String email;
   String role; // Puede ser 'student', 'instructor', 'admin'
 
@@ -30,5 +30,19 @@ class User {
       'email': email,
       'role': role,
     };
+  }
+
+  factory User.newUser({
+    String? uid,
+    String? name,
+    required String email,
+    required String role,
+  }) {
+    return User(
+      uid: uid ?? '',
+      name: name ?? '',
+      email: email,
+      role: role,
+    );
   }
 }
